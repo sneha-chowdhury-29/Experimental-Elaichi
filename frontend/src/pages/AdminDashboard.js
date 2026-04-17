@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { Upload, Plus, X } from 'lucide-react';
+import { Image, Plus, X } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
@@ -24,8 +24,6 @@ const AdminDashboard = () => {
     instructions: [''],
     image_url: '',
   });
-  const [imageFile, setImageFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -62,27 +60,7 @@ const AdminDashboard = () => {
     setFormData({ ...formData, [field]: newArray });
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-    const uploadFormData = new FormData();
-    uploadFormData.append('file', file);
-
-    try {
-      const response = await axios.post(`${BACKEND_URL}/api/upload`, uploadFormData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
-      setFormData({ ...formData, image_url: `${BACKEND_URL}${response.data.url}` });
-      toast.success('Image uploaded successfully');
-    } catch (error) {
-      toast.error('Failed to upload image');
-    } finally {
-      setUploading(false);
-    }
-  };
+  const handleImageUpload = null; // Removed - using URL-based images
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -222,46 +200,29 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Image Upload */}
+            {/* Image URL */}
             <div>
-              <Label htmlFor="image" className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
-                Recipe Image
+              <Label htmlFor="image_url" className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                Recipe Image URL
               </Label>
-              <div className="border border-[#1A1A1A] p-6 text-center">
-                {formData.image_url ? (
-                  <div className="space-y-4">
+              <div className="space-y-4">
+                <Input
+                  id="image_url"
+                  name="image_url"
+                  value={formData.image_url}
+                  onChange={handleInputChange}
+                  className="border-[#1A1A1A] rounded-none focus:ring-[#386641]"
+                  placeholder="https://images.unsplash.com/..."
+                  data-testid="recipe-image-url-input"
+                />
+                {formData.image_url && (
+                  <div className="border border-[#1A1A1A]">
                     <img
                       src={formData.image_url}
                       alt="Recipe preview"
-                      className="w-full h-64 object-cover border border-[#1A1A1A]"
+                      className="w-full h-64 object-cover"
                       data-testid="recipe-image-preview"
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => setFormData({ ...formData, image_url: '' })}
-                      className="bg-transparent border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#F8F6F0] px-6 py-2 font-['Outfit'] font-bold text-sm tracking-wide transition-all rounded-none"
-                      data-testid="remove-image-button"
-                    >
-                      Remove Image
-                    </Button>
-                  </div>
-                ) : (
-                  <div>
-                    <Upload size={40} className="mx-auto mb-4 text-[#1A1A1A]/50" />
-                    <label
-                      htmlFor="image-upload"
-                      className="inline-block bg-[#386641] text-white hover:bg-[#2B4F32] px-8 py-3 font-['Outfit'] font-bold tracking-wide transition-all cursor-pointer"
-                      data-testid="upload-image-button"
-                    >
-                      {uploading ? 'Uploading...' : 'Upload Image'}
-                    </label>
-                    <input
-                      id="image-upload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      disabled={uploading}
+                      onError={(e) => { e.target.style.display = 'none'; }}
                     />
                   </div>
                 )}

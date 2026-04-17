@@ -4,6 +4,7 @@ import Lenis from 'lenis';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navigation from './components/Navigation';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import RecipeDetail from './pages/RecipeDetail';
 import Login from './pages/Login';
@@ -54,6 +55,7 @@ function App() {
             />
           </Routes>
           <Toaster />
+          <Footer />
         </div>
       </BrowserRouter>
     </AuthProvider>
