@@ -1,0 +1,114 @@
+{
+  "theme": "LIGHT",
+  "archetype": "Organic & Earthy with Vibrant Spice Accents and Swiss/Editorial Structure",
+  "brand_name": "Experimental Elaichi",
+  "typography": {
+    "fonts": {
+      "headings": "Cormorant Garamond, serif",
+      "subheadings": "Outfit, sans-serif",
+      "body": "Manrope, sans-serif"
+    },
+    "rules": {
+      "h1": "text-5xl sm:text-6xl+ font-bold tracking-tighter leading-none text-[#1A1A1A]",
+      "h2": "text-4xl sm:text-5xl font-semibold tracking-tight text-[#1A1A1A]",
+      "h3": "text-2xl sm:text-3xl font-medium text-[#1A1A1A]",
+      "body": "text-base leading-relaxed text-[#1A1A1A]/80",
+      "overline": "text-sm font-bold uppercase tracking-[0.2em] text-[#E76F51]",
+      "special": "font-['Cormorant_Garamond'] italic"
+    }
+  },
+  "colors": {
+    "background": {
+      "base": "#F8F6F0",
+      "surface": "#FFFFFF",
+      "inverse": "#1A1A1A"
+    },
+    "primary": {
+      "DEFAULT": "#386641",
+      "foreground": "#FFFFFF",
+      "hover": "#2B4F32"
+    },
+    "accents": {
+      "saffron": "#E76F51",
+      "turmeric": "#E9C46A",
+      "chili": "#E63946",
+      "elaichi": "#386641"
+    },
+    "text": {
+      "primary": "#1A1A1A",
+      "secondary": "#4A4A4A",
+      "inverse": "#F8F6F0"
+    },
+    "border": "#1A1A1A"
+  },
+  "spacing_and_layout": {
+    "philosophy": "Editorial Grid/Zine style. High contrast structural lines with generous internal padding.",
+    "container_padding": "p-6 sm:p-8 lg:p-12",
+    "gap": "gap-8 lg:gap-12",
+    "radius": "rounded-none",
+    "borders": "Solid 1px #1A1A1A borders for structural grid appearance. Use border-collapse patterns."
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#386641] text-white hover:bg-[#2B4F32] rounded-none px-8 py-4 font-['Outfit'] font-bold tracking-wide transition-all",
+      "secondary": "bg-transparent border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#F8F6F0] rounded-none px-8 py-4 font-['Outfit'] font-bold tracking-wide transition-all",
+      "tags": "bg-[#E9C46A] text-[#1A1A1A] px-3 py-1 text-xs font-['Outfit'] font-bold uppercase tracking-wider"
+    },
+    "cards": {
+      "recipe_card": "bg-white border border-[#1A1A1A] transition-all hover:-translate-y-1 hover:shadow-[8px_8px_0px_#1A1A1A] group"
+    },
+    "navigation": {
+      "style": "Sticky top, bg-[#F8F6F0]/90 backdrop-blur-xl border-b border-[#1A1A1A] z-50",
+      "logo": "font-['Cormorant_Garamond'] text-2xl font-bold italic text-[#386641]"
+    }
+  },
+  "media": {
+    "image_urls": {
+      "hero_image": {
+        "url": "https://images.unsplash.com/photo-1664994464799-c8f643d712f6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBpbmRpYW4lMjBmb29kJTIwcGxhdGluZyUyMHJlY2lwZXxlbnwwfHx8fDE3NzY0MjEzNDV8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Modern Indian dish plated beautifully on a table, representing experimental Indian food. Use in hero section.",
+        "category": "hero"
+      },
+      "recipe_placeholder_1": {
+        "url": "https://images.unsplash.com/photo-1727404558869-2c4506390b20?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwzfHxtb2Rlcm4lMjBpbmRpYW4lMjBmb29kJTIwcGxhdGluZyUyMHJlY2lwZXxlbnwwfHx8fDE3NzY0MjEzNDV8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Spooning sauce over a dish. Use for recipe list or step-by-step detail.",
+        "category": "recipe"
+      },
+      "recipe_placeholder_2": {
+        "url": "https://images.unsplash.com/photo-1720499035862-f764f0ee4032?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBpbmRpYW4lMjBmb29kJTIwcGxhdGluZyUyMHJlY2lwZXxlbnwwfHx8fDE3NzY0MjEzNDV8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Dish with edible flowers. Perfect for experimental dessert recipe.",
+        "category": "recipe"
+      },
+      "texture_bg": {
+        "url": "https://images.unsplash.com/photo-1600728257188-480e132c1610?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwyfHxzcGljZXMlMjBmbGF0JTIwbGF5fGVufDB8fHx8MTc3NjQyMTM1OHww&ixlib=rb-4.1.0&q=85",
+        "description": "Brown powder/spice in glass bowl flat lay. Use for category headers or subtle backgrounds.",
+        "category": "background"
+      },
+      "recipe_placeholder_3": {
+        "url": "https://images.unsplash.com/photo-1612036167614-ae83edbce270?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHw0fHxtb2Rlcm4lMjBpbmRpYW4lMjBmb29kJTIwcGxhdGluZyUyMHJlY2lwZXxlbnwwfHx8fDE3NzY0MjEzNDV8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Sliced cucumber on white ceramic plate. Use for fresh experimental salads.",
+        "category": "recipe"
+      }
+    },
+    "image_constraints": "Use aspect-square or aspect-[4/5] for recipe cards with object-cover. Images must not exceed 80vh on mobile."
+  },
+  "motion_and_interactions": {
+    "hover_states": "Interactive elements must transition clearly. Cards should use the brutalist solid shadow on hover (-translate-y-1, shadow-[8px_8px_0px_#1A1A1A]).",
+    "page_transitions": "Use Framer Motion for staggered list entrance on recipe cards. Ensure prefers-reduced-motion is respected."
+  },
+  "accessibility_and_testing": {
+    "contrast": "Ensure all text meets at least 4.5:1 ratio against backgrounds.",
+    "testing_attributes": "All interactive elements, buttons, inputs, links MUST include a kebab-case data-testid attribute based on role (e.g. data-testid='recipe-search-input')."
+  },
+  "instructions_to_main_agent": [
+    "Build a colourful, experimental Indian food blog.",
+    "Do NOT use 'Inter' for headings. Use 'Cormorant Garamond' via Google Fonts for headings, 'Outfit' for UI/Subheadings, and 'Manrope' for body.",
+    "Install and use lenis for smooth scrolling.",
+    "Install and use framer-motion for staggering recipe cards and page transitions.",
+    "Adopt an 'Editorial Zine' layout. Use border-collapse and 1px black borders around major sections and cards to create a structural, encyclopedia-like look.",
+    "The Hero section should have massive typography and an overlapping or full-bleed image. Do NOT use standard center-aligned generic layout.",
+    "Integrate Shadcn UI elements for Admin Login, Search, and Recipe Forms, but strip their default rounded styles to match the 'rounded-none' brutalist/editorial aesthetic.",
+    "For the recipe detail page, use a split layout if possible: Sticky ingredients on the left, steps on the right.",
+    "Include 'data-testid' on all interactive elements as requested."
+  ]
+}
