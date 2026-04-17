@@ -262,7 +262,7 @@ async def download_file(path: str, authorization: str = Header(None), auth: str 
 
 # ========== RECIPE ENDPOINTS ==========
 @api_router.get("/recipes", response_model=List[RecipeResponse])
-async def get_recipes(search: Optional[str] = None, category: Optional[str] = None):
+async def get_recipes(search: Optional[str] = None, category: Optional[str] = None, page: int = 1, limit: int = 50):
     query = {}
     if search:
         query["$or"] = [
@@ -272,7 +272,9 @@ async def get_recipes(search: Optional[str] = None, category: Optional[str] = No
     if category:
         query["category"] = category
     
-    recipes = await db.recipes.find(query, {"_id": 0}).to_list(1000)
+    limit = min(limit, 100)
+    skip = (page - 1) * limit
+    recipes = await db.recipes.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
     return recipes
 
 @api_router.get("/recipes/{recipe_id}", response_model=RecipeResponse)
