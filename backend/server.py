@@ -60,11 +60,10 @@ def create_refresh_token(user_id: str) -> str:
     return jwt.encode(payload, get_jwt_secret(), algorithm=JWT_ALGORITHM)
 
 async def get_current_user(request: Request) -> dict:
-    token = request.cookies.get("access_token")
-    if not token:
-        auth_header = request.headers.get("Authorization", "")
-        if auth_header.startswith("Bearer "):
-            token = auth_header[7:]
+    auth_header = request.headers.get("Authorization", "")
+    token = None
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:]
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     try:
@@ -200,7 +199,7 @@ async def register(user_data: UserRegister):
     return UserResponse(id=user_id, email=email, name=user_data.name, role="user")
 
 @api_router.post("/auth/login")
-async def login(credentials: UserLogin, response: Response):
+async def login(credentials: UserLogin):
     email = credentials.email.lower()
     user = await db.users.find_one({"email": email})
     
@@ -209,22 +208,17 @@ async def login(credentials: UserLogin, response: Response):
     
     user_id = str(user["_id"])
     access_token = create_access_token(user_id, email)
-    refresh_token = create_refresh_token(user_id)
-    
-    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=False, samesite="lax", max_age=900, path="/")
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, secure=False, samesite="lax", max_age=604800, path="/")
     
     return {
         "id": user_id,
         "email": user["email"],
         "name": user["name"],
-        "role": user["role"]
+        "role": user["role"],
+        "access_token": access_token
     }
 
 @api_router.post("/auth/logout")
-async def logout(response: Response):
-    response.delete_cookie(key="access_token", path="/")
-    response.delete_cookie(key="refresh_token", path="/")
+async def logout():
     return {"message": "Logged out successfully"}
 
 @api_router.get("/auth/me", response_model=UserResponse)
@@ -403,13 +397,8 @@ app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=[
-        os.environ.get('FRONTEND_URL', 'http://localhost:3000'),
-        os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001').replace('/api', '')
-    ] + os.environ.get('CORS_ORIGINS', '').split(',') if os.environ.get('CORS_ORIGINS') else [
-        os.environ.get('FRONTEND_URL', 'http://localhost:3000')
-    ],
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

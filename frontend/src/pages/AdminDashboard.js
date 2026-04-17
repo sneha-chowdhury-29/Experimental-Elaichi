@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { Image, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { toast } from 'sonner';
+import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AdminDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const editId = searchParams.get('edit');
+  const { api } = useAuth();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -77,14 +79,10 @@ const AdminDashboard = () => {
 
     try {
       if (editId) {
-        await axios.put(`${BACKEND_URL}/api/recipes/${editId}`, cleanedData, {
-          withCredentials: true,
-        });
+        await api.put(`/api/recipes/${editId}`, cleanedData);
         toast.success('Recipe updated successfully');
       } else {
-        await axios.post(`${BACKEND_URL}/api/recipes`, cleanedData, {
-          withCredentials: true,
-        });
+        await api.post(`/api/recipes`, cleanedData);
         toast.success('Recipe created successfully');
       }
 

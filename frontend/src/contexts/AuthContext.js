@@ -3,23 +3,39 @@ import axios from 'axios';
 
 const AuthContext = createContext(null);
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Axios interceptor to add auth token to all requests
+const api = axios.create({ baseURL: BACKEND_URL });
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
   useEffect(() => {
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkAuth = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      setUser(false);
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/auth/me`, {
-        withCredentials: true
-      });
+      const response = await api.get('/api/auth/me');
       setUser(response.data);
     } catch (error) {
+      localStorage.removeItem('access_token');
       setUser(false);
     } finally {
       setLoading(false);
@@ -30,9 +46,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(
         `${BACKEND_URL}/api/auth/login`,
-        { email, password },
-        { withCredentials: true }
+        { email, password }
       );
+      localStorage.setItem('access_token', response.data.access_token);
       setUser(response.data);
       return { success: true };
     } catch (error) {
@@ -44,12 +60,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    try {
-      await axios.post(`${BACKEND_URL}/api/auth/logout`, {}, { withCredentials: true });
-      setUser(false);
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+    localStorage.removeItem('access_token');
+    setUser(false);
   };
 
   const formatApiErrorDetail = (detail) => {
@@ -62,7 +74,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, checkAuth }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, checkAuth, api }}>
       {children}
     </AuthContext.Provider>
   );

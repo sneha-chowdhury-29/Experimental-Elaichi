@@ -11,7 +11,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const RecipeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, api } = useAuth();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,9 +35,7 @@ const RecipeDetail = () => {
     if (!window.confirm('Are you sure you want to delete this recipe?')) return;
 
     try {
-      await axios.delete(`${BACKEND_URL}/api/recipes/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/api/recipes/${id}`);
       toast.success('Recipe deleted successfully');
       navigate('/');
     } catch (error) {
