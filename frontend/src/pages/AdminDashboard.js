@@ -1,0 +1,390 @@
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import axios from 'axios';
+import { Upload, Plus, X } from 'lucide-react';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
+import { toast } from 'sonner';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const AdminDashboard = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
+
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    category: '',
+    cooking_time: '',
+    servings: '',
+    ingredients: [''],
+    instructions: [''],
+    image_url: '',
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (editId) {
+      fetchRecipe(editId);
+    }
+  }, [editId]);
+
+  const fetchRecipe = async (id) => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/recipes/${id}`);
+      setFormData(response.data);
+    } catch (error) {
+      toast.error('Failed to load recipe');
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleArrayChange = (index, value, field) => {
+    const newArray = [...formData[field]];
+    newArray[index] = value;
+    setFormData({ ...formData, [field]: newArray });
+  };
+
+  const addArrayItem = (field) => {
+    setFormData({ ...formData, [field]: [...formData[field], ''] });
+  };
+
+  const removeArrayItem = (index, field) => {
+    const newArray = formData[field].filter((_, i) => i !== index);
+    setFormData({ ...formData, [field]: newArray });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const uploadFormData = new FormData();
+    uploadFormData.append('file', file);
+
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/upload`, uploadFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+      setFormData({ ...formData, image_url: `${BACKEND_URL}${response.data.url}` });
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      toast.error('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Filter out empty ingredients and instructions
+    const cleanedData = {
+      ...formData,
+      cooking_time: parseInt(formData.cooking_time),
+      servings: parseInt(formData.servings),
+      ingredients: formData.ingredients.filter((item) => item.trim() !== ''),
+      instructions: formData.instructions.filter((item) => item.trim() !== ''),
+    };
+
+    try {
+      if (editId) {
+        await axios.put(`${BACKEND_URL}/api/recipes/${editId}`, cleanedData, {
+          withCredentials: true,
+        });
+        toast.success('Recipe updated successfully');
+      } else {
+        await axios.post(`${BACKEND_URL}/api/recipes`, cleanedData, {
+          withCredentials: true,
+        });
+        toast.success('Recipe created successfully');
+      }
+
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        category: '',
+        cooking_time: '',
+        servings: '',
+        ingredients: [''],
+        instructions: [''],
+        image_url: '',
+      });
+      setSearchParams({});
+    } catch (error) {
+      toast.error(editId ? 'Failed to update recipe' : 'Failed to create recipe');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen py-16" data-testid="admin-dashboard">
+      <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="border border-[#1A1A1A] bg-white p-8">
+          <h1 className="heading-2 mb-8" data-testid="admin-dashboard-title">
+            {editId ? 'Edit Recipe' : 'Create New Recipe'}
+          </h1>
+
+          <form onSubmit={handleSubmit} className="space-y-8" data-testid="recipe-form">
+            {/* Basic Info */}
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="title" className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                  Recipe Title
+                </Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className="border-[#1A1A1A] rounded-none focus:ring-[#386641]"
+                  required
+                  data-testid="recipe-title-input"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="description" className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={4}
+                  className="border-[#1A1A1A] rounded-none focus:ring-[#386641]"
+                  required
+                  data-testid="recipe-description-input"
+                />
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                <div>
+                  <Label htmlFor="category" className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                    Category
+                  </Label>
+                  <Input
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className="border-[#1A1A1A] rounded-none focus:ring-[#386641]"
+                    placeholder="e.g., Appetizer"
+                    required
+                    data-testid="recipe-category-input"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="cooking_time" className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                    Cooking Time (min)
+                  </Label>
+                  <Input
+                    id="cooking_time"
+                    name="cooking_time"
+                    type="number"
+                    value={formData.cooking_time}
+                    onChange={handleInputChange}
+                    className="border-[#1A1A1A] rounded-none focus:ring-[#386641]"
+                    required
+                    data-testid="recipe-cooking-time-input"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="servings" className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                    Servings
+                  </Label>
+                  <Input
+                    id="servings"
+                    name="servings"
+                    type="number"
+                    value={formData.servings}
+                    onChange={handleInputChange}
+                    className="border-[#1A1A1A] rounded-none focus:ring-[#386641]"
+                    required
+                    data-testid="recipe-servings-input"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Image Upload */}
+            <div>
+              <Label htmlFor="image" className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                Recipe Image
+              </Label>
+              <div className="border border-[#1A1A1A] p-6 text-center">
+                {formData.image_url ? (
+                  <div className="space-y-4">
+                    <img
+                      src={formData.image_url}
+                      alt="Recipe preview"
+                      className="w-full h-64 object-cover border border-[#1A1A1A]"
+                      data-testid="recipe-image-preview"
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, image_url: '' })}
+                      className="bg-transparent border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#F8F6F0] px-6 py-2 font-['Outfit'] font-bold text-sm tracking-wide transition-all rounded-none"
+                      data-testid="remove-image-button"
+                    >
+                      Remove Image
+                    </Button>
+                  </div>
+                ) : (
+                  <div>
+                    <Upload size={40} className="mx-auto mb-4 text-[#1A1A1A]/50" />
+                    <label
+                      htmlFor="image-upload"
+                      className="inline-block bg-[#386641] text-white hover:bg-[#2B4F32] px-8 py-3 font-['Outfit'] font-bold tracking-wide transition-all cursor-pointer"
+                      data-testid="upload-image-button"
+                    >
+                      {uploading ? 'Uploading...' : 'Upload Image'}
+                    </label>
+                    <input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Ingredients */}
+            <div>
+              <Label className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                Ingredients
+              </Label>
+              <div className="space-y-3" data-testid="ingredients-list">
+                {formData.ingredients.map((ingredient, index) => (
+                  <div key={index} className="flex gap-2">
+                    <Input
+                      value={ingredient}
+                      onChange={(e) => handleArrayChange(index, e.target.value, 'ingredients')}
+                      className="border-[#1A1A1A] rounded-none focus:ring-[#386641]"
+                      placeholder={`Ingredient ${index + 1}`}
+                      data-testid={`ingredient-input-${index}`}
+                    />
+                    {formData.ingredients.length > 1 && (
+                      <Button
+                        type="button"
+                        onClick={() => removeArrayItem(index, 'ingredients')}
+                        className="bg-[#E63946] text-white hover:bg-[#d62835] px-4 rounded-none"
+                        data-testid={`remove-ingredient-${index}`}
+                      >
+                        <X size={16} />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <Button
+                type="button"
+                onClick={() => addArrayItem('ingredients')}
+                className="mt-3 bg-transparent border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#F8F6F0] px-6 py-2 font-['Outfit'] font-bold text-sm tracking-wide transition-all rounded-none"
+                data-testid="add-ingredient-button"
+              >
+                <Plus size={16} className="mr-2" />
+                Add Ingredient
+              </Button>
+            </div>
+
+            {/* Instructions */}
+            <div>
+              <Label className="font-['Outfit'] font-bold text-sm uppercase tracking-wider mb-2 block">
+                Instructions
+              </Label>
+              <div className="space-y-3" data-testid="instructions-list">
+                {formData.instructions.map((instruction, index) => (
+                  <div key={index} className="flex gap-2">
+                    <Textarea
+                      value={instruction}
+                      onChange={(e) => handleArrayChange(index, e.target.value, 'instructions')}
+                      className="border-[#1A1A1A] rounded-none focus:ring-[#386641]"
+                      placeholder={`Step ${index + 1}`}
+                      rows={3}
+                      data-testid={`instruction-input-${index}`}
+                    />
+                    {formData.instructions.length > 1 && (
+                      <Button
+                        type="button"
+                        onClick={() => removeArrayItem(index, 'instructions')}
+                        className="bg-[#E63946] text-white hover:bg-[#d62835] px-4 rounded-none"
+                        data-testid={`remove-instruction-${index}`}
+                      >
+                        <X size={16} />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <Button
+                type="button"
+                onClick={() => addArrayItem('instructions')}
+                className="mt-3 bg-transparent border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#F8F6F0] px-6 py-2 font-['Outfit'] font-bold text-sm tracking-wide transition-all rounded-none"
+                data-testid="add-instruction-button"
+              >
+                <Plus size={16} className="mr-2" />
+                Add Step
+              </Button>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex gap-4 pt-6">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="flex-1 bg-[#386641] text-white hover:bg-[#2B4F32] px-8 py-4 font-['Outfit'] font-bold tracking-wide transition-all rounded-none"
+                data-testid="submit-recipe-button"
+              >
+                {loading ? 'Saving...' : editId ? 'Update Recipe' : 'Create Recipe'}
+              </Button>
+              {editId && (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setSearchParams({});
+                    setFormData({
+                      title: '',
+                      description: '',
+                      category: '',
+                      cooking_time: '',
+                      servings: '',
+                      ingredients: [''],
+                      instructions: [''],
+                      image_url: '',
+                    });
+                  }}
+                  className="bg-transparent border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#F8F6F0] px-8 py-4 font-['Outfit'] font-bold tracking-wide transition-all rounded-none"
+                  data-testid="cancel-edit-button"
+                >
+                  Cancel
+                </Button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;

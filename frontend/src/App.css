@@ -1,34 +1,108 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.App {
+  min-height: 100vh;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.hero-section {
+  min-height: 70vh;
+  position: relative;
+  overflow: hidden;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.recipe-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.App-link {
-    color: #61dafb;
+.recipe-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0px #1A1A1A;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.btn-primary {
+  background-color: #386641;
+  color: white;
+  padding: 1rem 2rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #2B4F32;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid #1A1A1A;
+  color: #1A1A1A;
+  padding: 1rem 2rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: #1A1A1A;
+  color: #F8F6F0;
+}
+
+.tag {
+  background-color: #E9C46A;
+  color: #1A1A1A;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.heading-1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: #1A1A1A;
+}
+
+.heading-2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #1A1A1A;
+}
+
+.heading-3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.body-text {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(26, 26, 26, 0.8);
+}
+
+.overline {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #E76F51;
+}
+
+.italic-special {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
 }
