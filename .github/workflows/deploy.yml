@@ -25,11 +25,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./frontend
-        run: npm install
+        run: yarn install
 
       - name: Build React app
         working-directory: ./frontend
-        run: npm run build
+        run: yarn build
 
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
@@ -47,4 +47,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4`
+        uses: actions/deploy-pages@v4
